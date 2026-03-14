@@ -10,47 +10,44 @@ gsap.registerPlugin(ScrollTrigger);
 let lenis: Lenis;
 
 const Navbar = () => {
-  useEffect(() => {
-    lenis = new Lenis({
-      duration: 1.2,
-      smoothWheel: true,
+ useEffect(() => {
+  lenis = new Lenis({
+    duration: 1.2,
+    smoothWheel: true,
+  });
+
+  lenis.on("scroll", ScrollTrigger.update);
+
+  gsap.ticker.add((time) => {
+    lenis.raf(time * 1000);
+  });
+
+  gsap.ticker.lagSmoothing(0);
+
+  let links = document.querySelectorAll(".header ul a");
+
+  links.forEach((elem) => {
+    let element = elem as HTMLAnchorElement;
+
+    element.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      let section = element.getAttribute("data-href");
+
+      if (section) {
+        const target = document.querySelector(section) as HTMLElement | null;
+
+if (target) {
+  lenis.scrollTo(target);
+}
+      }
     });
+  });
 
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
-
-    // Navigation smooth scroll
-    let links = document.querySelectorAll(".header ul a");
-
-    links.forEach((elem) => {
-      let element = elem as HTMLAnchorElement;
-
-      element.addEventListener("click", (e) => {
-        e.preventDefault();
-
-        let section = element.getAttribute("data-href");
-
-        if (section) {
-          const target = document.querySelector(section);
-
-          if (target) {
-            lenis.scrollTo("target");
-          }
-        }
-      });
-    });
-
-    // Sync GSAP ScrollTrigger with Lenis
-    lenis.on("scroll", ScrollTrigger.update);
-
-    return () => {
-      lenis.destroy();
-    };
-  }, []);
+  return () => {
+    lenis.destroy();
+  };
+}, []);
 
   return (
     <>
