@@ -10,6 +10,7 @@ const Loading = ({ percent }: { percent: number }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [clicked, setClicked] = useState(false);
 
+useEffect(() => {
   if (percent >= 100) {
     setTimeout(() => {
       setLoaded(true);
@@ -18,6 +19,7 @@ const Loading = ({ percent }: { percent: number }) => {
       }, 1000);
     }, 600);
   }
+}, [percent]);
 
   useEffect(() => {
     import("./utils/initialFX").then((module) => {
@@ -96,7 +98,7 @@ export const setProgress = (setLoading: (value: number) => void) => {
   let percent: number = 0;
 
   let interval = setInterval(() => {
-    if (percent <= 50) {
+    if (percent <= 99) {
       let rand = Math.round(Math.random() * 5);
       percent = percent + rand;
       setLoading(percent);
@@ -105,7 +107,7 @@ export const setProgress = (setLoading: (value: number) => void) => {
       interval = setInterval(() => {
         percent = percent + Math.round(Math.random());
         setLoading(percent);
-        if (percent > 91) {
+        if (percent > 99) {
           clearInterval(interval);
         }
       }, 2000);

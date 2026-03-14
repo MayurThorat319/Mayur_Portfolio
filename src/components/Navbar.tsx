@@ -1,50 +1,64 @@
 import { useEffect } from "react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import HoverLinks from "./HoverLinks";
 import { gsap } from "gsap";
-import { ScrollSmoother } from "gsap/ScrollSmoother";
 import "./styles/Navbar.css";
+import Lenis from "@studio-freight/lenis";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-gsap.registerPlugin(ScrollSmoother, ScrollTrigger);
-export let smoother: ScrollSmoother;
+gsap.registerPlugin(ScrollTrigger);
+
+let lenis: Lenis;
 
 const Navbar = () => {
   useEffect(() => {
-    smoother = ScrollSmoother.create({
-      wrapper: "#smooth-wrapper",
-      content: "#smooth-content",
-      smooth: 1.7,
-      speed: 1.7,
-      effects: true,
-      autoResize: true,
-      ignoreMobileResize: true,
+    lenis = new Lenis({
+      duration: 1.2,
+      smoothWheel: true,
     });
 
-    smoother.scrollTop(0);
-    smoother.paused(true);
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
 
+    requestAnimationFrame(raf);
+
+    // Navigation smooth scroll
     let links = document.querySelectorAll(".header ul a");
+
     links.forEach((elem) => {
       let element = elem as HTMLAnchorElement;
+
       element.addEventListener("click", (e) => {
-        if (window.innerWidth > 1024) {
-          e.preventDefault();
-          let elem = e.currentTarget as HTMLAnchorElement;
-          let section = elem.getAttribute("data-href");
-          smoother.scrollTo(section, true, "top top");
+        e.preventDefault();
+
+        let section = element.getAttribute("data-href");
+
+        if (section) {
+          const target = document.querySelector(section);
+
+          if (target) {
+            lenis.scrollTo("target");
+          }
         }
       });
     });
-    window.addEventListener("resize", () => {
-      ScrollSmoother.refresh(true);
-    });
+
+    // Sync GSAP ScrollTrigger with Lenis
+    lenis.on("scroll", ScrollTrigger.update);
+
+    return () => {
+      lenis.destroy();
+    };
   }, []);
+
   return (
     <>
       <div className="header">
         <a href="/#" className="navbar-title" data-cursor="disable">
           MT
         </a>
+
         <a
           href="mailto:mayurthorat147@gmail.com"
           className="navbar-connect"
@@ -52,17 +66,20 @@ const Navbar = () => {
         >
           mayurthorat147@gmail.com
         </a>
+
         <ul>
           <li>
             <a data-href="#about" href="#about">
               <HoverLinks text="ABOUT" />
             </a>
           </li>
+
           <li>
             <a data-href="#work" href="#work">
               <HoverLinks text="WORK" />
             </a>
           </li>
+
           <li>
             <a data-href="#contact" href="#contact">
               <HoverLinks text="CONTACT" />
