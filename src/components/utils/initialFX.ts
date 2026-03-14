@@ -1,6 +1,16 @@
 import { SplitText } from "gsap/SplitText";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { smoother } from "../Navbar";
+
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+
+ScrollSmoother.create({
+  wrapper: "#smooth-wrapper",
+  content: "#smooth-content",
+  smooth: 1.5,
+});
 
 export function initialFX() {
   document.body.style.overflowY = "auto";
