@@ -16,35 +16,42 @@ const Navbar = () => {
     smoothWheel: true,
   });
 
+  // ✅ Properly wire ScrollTrigger to Lenis
   lenis.on("scroll", ScrollTrigger.update);
 
-  gsap.ticker.add((time) => {
-    lenis.raf(time * 1000);
-  });
-
+  // ✅ Store the ticker so it can be removed on cleanup
+  const tickerFn = (time: number) => lenis.raf(time * 1000);
+  gsap.ticker.add(tickerFn);
   gsap.ticker.lagSmoothing(0);
 
+  // ✅ Tell ScrollTrigger to use Lenis's scroll position
+  ScrollTrigger.scrollerProxy(document.body, {
+    scrollTop(value) {
+      if (arguments.length && value !== undefined) {
+        lenis.scrollTo(value, { immediate: true });
+      }
+      return lenis.scroll;
+    },
+    getBoundingClientRect() {
+      return { top: 0, left: 0, width: window.innerWidth, height: window.innerHeight };
+    },
+  });
+
   let links = document.querySelectorAll(".header ul a");
-
   links.forEach((elem) => {
-    let element = elem as HTMLAnchorElement;
-
+    const element = elem as HTMLAnchorElement;
     element.addEventListener("click", (e) => {
       e.preventDefault();
-
-      let section = element.getAttribute("data-href");
-
+      const section = element.getAttribute("data-href");
       if (section) {
         const target = document.querySelector(section) as HTMLElement | null;
-
-if (target) {
-  lenis.scrollTo(target);
-}
+        if (target) lenis.scrollTo(target);
       }
     });
   });
 
   return () => {
+    gsap.ticker.remove(tickerFn); // ✅ Remove ticker on unmount
     lenis.destroy();
   };
 }, []);
