@@ -340,7 +340,7 @@ h2.landing-info-h2 {
 
   .character-model::after,
   .character-model::before {
-    /* display: none; */
+    display: none;
   }
 
   .landing-intro {
