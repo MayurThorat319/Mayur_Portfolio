@@ -8,42 +8,45 @@ const WhatIDo = () => {
     containerRef.current[index] = el;
   };
 
-  useEffect(() => {
-    if (ScrollTrigger.isTouch) {
-      containerRef.current.forEach((container) => {
-        if (container) {
-          container.classList.remove("what-noTouch");
-          container.addEventListener("click", () => handleClick(container));
-        }
-      });
-    }
-    return () => {
-      containerRef.current.forEach((container) => {
-        if (container) {
-          container.removeEventListener("click", () => handleClick(container));
-        }
-      });
-    };
-  }, []);
+  const isTouch = ScrollTrigger.isTouch;
+
+  // useEffect(() => {
+  //   if (ScrollTrigger.isTouch) {
+  //     containerRef.current.forEach((container) => {
+  //       if (container) {
+  //         container.classList.remove("what-noTouch");
+  //         container.addEventListener("click", () => handleClick(container));
+  //       }
+  //     });
+  //   }
+  //   return () => {
+  //     containerRef.current.forEach((container) => {
+  //       if (container) {
+  //         container.removeEventListener("click", () => handleClick(container));
+  //       }
+  //     });
+  //   };
+  // }, []);
 
   return (
     <div className="whatIDO">
       <div className="what-box">
         <h2 className="title">
-          W<span className="hat-h2">HAT</span>
-          <div>
+          <span>
+            W<span className="hat-h2">HAT</span>
+          </span>
+          <span>
             I<span className="do-h2"> DO</span>
-          </div>
+          </span>
         </h2>
       </div>
 
       <div className="what-box">
         <div className="what-box-in">
-
           {/* MOBILE DEVELOPMENT */}
 
           <div
-            className="what-content what-noTouch"
+          className={`what-content ${isTouch ? "" : "what-noTouch"}`}
             ref={(el) => setRef(el, 0)}
           >
             <div className="what-content-in">
@@ -70,14 +73,21 @@ const WhatIDo = () => {
                 <div className="what-tags">Android Apps</div>
               </div>
 
-              <div className="what-arrow"></div>
+            <div
+  className="what-arrow"
+  onClick={(e) => {
+    e.stopPropagation();
+    const container = containerRef.current[0];
+    if (container) handleClick(container);
+  }}
+></div>
             </div>
           </div>
 
           {/* BACKEND */}
 
           <div
-            className="what-content what-noTouch"
+          className={`what-content ${isTouch ? "" : "what-noTouch"}`}
             ref={(el) => setRef(el, 1)}
           >
             <div className="what-content-in">
@@ -105,10 +115,16 @@ const WhatIDo = () => {
                 <div className="what-tags">API Integration</div>
               </div>
 
-              <div className="what-arrow"></div>
+             <div
+  className="what-arrow"
+  onClick={(e) => {
+    e.stopPropagation();
+    const container = containerRef.current[1];
+    if (container) handleClick(container);
+  }}
+></div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -118,17 +134,17 @@ const WhatIDo = () => {
 export default WhatIDo;
 
 function handleClick(container: HTMLDivElement) {
+  const parent = container.parentElement;
+  if (!parent) return;
+
+  const siblings = Array.from(parent.children) as HTMLDivElement[];
+
+  siblings.forEach((sib) => {
+    if (sib !== container) {
+      sib.classList.remove("what-content-active");
+      sib.classList.remove("what-sibling"); // 🔥 remove instead of toggle
+    }
+  });
+
   container.classList.toggle("what-content-active");
-  container.classList.remove("what-sibling");
-
-  if (container.parentElement) {
-    const siblings = Array.from(container.parentElement.children);
-
-    siblings.forEach((sibling) => {
-      if (sibling !== container) {
-        sibling.classList.remove("what-content-active");
-        sibling.classList.toggle("what-sibling");
-      }
-    });
-  }
 }

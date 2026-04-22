@@ -58,7 +58,7 @@
   transform: translate(calc(100% - 2px), -50%);
   z-index: 9;
   position: fixed;
-  display: none;
+  /* display: none; */
   width: 300px;
   height: 300px;
   background-color: #22d3ee;
@@ -114,8 +114,7 @@
   transform: translateX(-50%);
   width: 100%;
   left: 50%;
-  z-index: 0;
-  bottom: 50px;
+z-index: 5;  bottom: 50px;
   pointer-events: inherit;
 }
 
@@ -152,6 +151,7 @@
 }
 
 .character-model canvas {
+  display: block;
   position: relative;
   pointer-events: none;
   z-index: 2;
@@ -262,6 +262,14 @@ h2.landing-info-h2 {
   left: 0;
 }
 
+@media screen and (max-width: 1024px) {
+  .character-model {
+    height: 60vh; /* Adjust height for mobile */
+    bottom: 0;
+    overflow: visible;
+  }
+}
+
 @media screen and (min-width: 500px) {
   .landing-circle2 {
     display: block;
@@ -332,7 +340,7 @@ h2.landing-info-h2 {
 
   .character-model::after,
   .character-model::before {
-    display: none;
+    /* display: none; */
   }
 
   .landing-intro {
